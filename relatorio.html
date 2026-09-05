@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Relatório — Assistência Técnica</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<nav class="app-nav">
+  <div class="app-nav-inner">
+    <span class="app-nav-brand">Assistência Técnica</span>
+    <div class="app-nav-links">
+      <a href="index.html">Nova O.S.</a>
+      <a href="ordens.html">O.S. salvas</a>
+      <a href="relatorio.html" class="active">Relatório</a>
+    </div>
+  </div>
+</nav>
+
+<div class="sheet wide">
+
+  <div class="page-header">
+    <div>
+      <h1>Relatório e indicadores</h1>
+      <p>Visão geral das ordens de serviço registradas neste navegador.</p>
+    </div>
+  </div>
+
+  <div class="kpi-grid" id="kpiGrid">
+    <div class="kpi-card">
+      <label>Total de O.S.</label>
+      <div class="kpi-value" id="kpiTotalOs">0</div>
+    </div>
+    <div class="kpi-card">
+      <label>Faturamento total</label>
+      <div class="kpi-value" id="kpiFaturamento">R$ 0,00</div>
+    </div>
+    <div class="kpi-card">
+      <label>Ticket médio</label>
+      <div class="kpi-value" id="kpiTicketMedio">R$ 0,00</div>
+    </div>
+    <div class="kpi-card">
+      <label>O.S. em aberto</label>
+      <div class="kpi-value" id="kpiAbertas">0</div>
+      <div class="kpi-sub" id="kpiAbertasSub"></div>
+    </div>
+  </div>
+
+  <div class="chart-grid">
+    <div class="chart-card">
+      <h3>O.S. por status</h3>
+      <canvas id="chartStatus"></canvas>
+    </div>
+    <div class="chart-card">
+      <h3>Serviços × peças no faturamento</h3>
+      <canvas id="chartServicoPeca"></canvas>
+    </div>
+    <div class="chart-card full">
+      <h3>Faturamento por mês</h3>
+      <canvas id="chartMes"></canvas>
+    </div>
+    <div class="chart-card full">
+      <h3>Serviços mais realizados</h3>
+      <canvas id="chartServicos"></canvas>
+    </div>
+  </div>
+
+  <div id="relatorioEmpty" class="empty-state" style="display:none;">
+    <h3>Ainda não há dados suficientes</h3>
+    <p>Salve algumas ordens de serviço para ver os indicadores e gráficos aqui.</p>
+    <a class="btn primary" href="index.html">Criar nova O.S.</a>
+  </div>
+
+</div>
+
+<footer class="note">Os dados ficam armazenados apenas neste navegador — nenhum dado é enviado a um servidor.</footer>
+
+<script src="db.js"></script>
+<script src="relatorio.js"></script>
+</body>
+</html>

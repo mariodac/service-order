@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ordem de Serviço — Assistência Técnica</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<nav class="app-nav">
+  <div class="app-nav-inner">
+    <span class="app-nav-brand">Assistência Técnica</span>
+    <div class="app-nav-links">
+      <a href="index.html" class="active">Nova O.S.</a>
+      <a href="ordens.html">O.S. salvas</a>
+      <a href="relatorio.html">Relatório</a>
+    </div>
+  </div>
+</nav>
+
+<div class="sheet">
+
+  <div class="stub">
+    <div>
+      <h1>Ordem de Serviço</h1>
+      <p>Assistência técnica em informática — hardware, software e manutenção de equipamentos.</p>
+      <div class="status-toggle" id="statusToggle" style="margin-top:14px;">
+        <button type="button" data-status="Aberta" class="active">Aberta</button>
+        <button type="button" data-status="Em andamento">Em andamento</button>
+        <button type="button" data-status="Concluída">Concluída</button>
+      </div>
+      <div class="edit-badge" id="editBadge"></div>
+    </div>
+    <div class="meta">
+      <label for="osNumero">Nº da O.S.</label>
+      <input class="os-number" id="osNumero" type="text" placeholder="0001">
+      <div class="date-field">
+        <label for="osData">Data de entrada</label>
+        <input id="osData" type="date">
+      </div>
+    </div>
+  </div>
+
+  <div class="perforation"></div>
+
+  <form id="osForm">
+
+    <!-- CLIENTE -->
+    <section class="block">
+      <div class="block-head">
+        <span class="block-index">01</span>
+        <h2>Dados do cliente</h2>
+      </div>
+      <div class="grid">
+        <div class="field span-2">
+          <label for="clienteNome">Nome completo</label>
+          <input id="clienteNome" type="text" placeholder="Nome do cliente">
+        </div>
+        <div class="field">
+          <label for="clienteTelefone">Telefone / WhatsApp</label>
+          <input id="clienteTelefone" type="tel" inputmode="numeric" placeholder="(00) 00000-0000" maxlength="15">
+          <span class="field-error" id="erroTelefone">Telefone inválido. Use (DDD) 9XXXX-XXXX.</span>
+        </div>
+        <div class="field">
+          <label for="clienteEmail">E-mail</label>
+          <input id="clienteEmail" type="email" placeholder="cliente@email.com">
+          <span class="field-error" id="erroEmail">E-mail inválido.</span>
+        </div>
+        <div class="field span-2">
+          <label for="clienteEndereco">Endereço</label>
+          <input id="clienteEndereco" type="text" placeholder="Rua, número, bairro, cidade">
+        </div>
+        <div class="field">
+          <label for="clienteDocumento">CPF / CNPJ</label>
+          <input id="clienteDocumento" type="text" inputmode="numeric" placeholder="Opcional" maxlength="18">
+          <span class="field-error" id="erroDocumento">CPF ou CNPJ inválido.</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- TÉCNICO -->
+    <section class="block">
+      <div class="block-head">
+        <span class="block-index">02</span>
+        <h2>Dados do técnico responsável</h2>
+      </div>
+      <div class="grid cols-3">
+        <div class="field">
+          <label for="tecnicoNome">Nome do técnico</label>
+          <input id="tecnicoNome" type="text" placeholder="Responsável pelo atendimento">
+        </div>
+        <div class="field">
+          <label for="tecnicoContato">Contato</label>
+          <input id="tecnicoContato" type="text" placeholder="Telefone ou ramal">
+        </div>
+        <div class="field">
+          <label for="osPrevisao">Previsão de entrega</label>
+          <input id="osPrevisao" type="date">
+          <span class="field-error" id="erroDatas">A previsão não pode ser anterior à data de entrada.</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- EQUIPAMENTO -->
+    <section class="block">
+      <div class="block-head">
+        <span class="block-index">03</span>
+        <h2>Dados do equipamento</h2>
+      </div>
+      <div class="grid cols-3">
+        <div class="field">
+          <label for="equipTipo">Tipo de equipamento</label>
+          <input id="equipTipo" type="text" placeholder="Notebook, PC, impressora...">
+        </div>
+        <div class="field">
+          <label for="equipMarca">Marca</label>
+          <input id="equipMarca" type="text" placeholder="Marca">
+        </div>
+        <div class="field">
+          <label for="equipModelo">Modelo</label>
+          <input id="equipModelo" type="text" placeholder="Modelo">
+        </div>
+        <div class="field">
+          <label for="equipSerie">Número de série</label>
+          <input id="equipSerie" type="text" placeholder="Opcional">
+        </div>
+        <div class="field">
+          <label for="equipSenha">Senha de acesso</label>
+          <input id="equipSenha" type="text" placeholder="Opcional">
+        </div>
+        <div class="field">
+          <label for="equipAcessorios">Acessórios entregues</label>
+          <input id="equipAcessorios" type="text" placeholder="Carregador, mouse, cabo...">
+        </div>
+      </div>
+    </section>
+
+    <!-- PROBLEMA -->
+    <section class="block">
+      <div class="block-head">
+        <span class="block-index">04</span>
+        <h2>Descrição do problema relatado</h2>
+      </div>
+      <div class="field">
+        <label for="problemaDescricao">O que o cliente relatou</label>
+        <textarea id="problemaDescricao" placeholder="Descreva o problema informado pelo cliente ao trazer o equipamento..."></textarea>
+      </div>
+    </section>
+
+    <!-- DIAGNÓSTICO -->
+    <section class="block">
+      <div class="block-head">
+        <span class="block-index">05</span>
+        <h2>Diagnóstico técnico</h2>
+      </div>
+      <div class="field">
+        <label for="diagnostico">O que foi identificado após a análise</label>
+        <textarea id="diagnostico" placeholder="Descreva a causa real do problema encontrada pelo técnico..."></textarea>
+      </div>
+    </section>
+
+    <!-- ORÇAMENTO -->
+    <section class="block">
+      <div class="block-head">
+        <span class="block-index">06</span>
+        <h2>Orçamento</h2>
+      </div>
+      <div class="field">
+        <label for="orcamentoDescricao">O que será feito</label>
+        <textarea id="orcamentoDescricao" placeholder="Descreva o que será realizado para resolver o problema, antes da execução..."></textarea>
+      </div>
+    </section>
+
+    <!-- SOLUÇÃO / SERVIÇOS -->
+    <section class="block">
+      <div class="block-head">
+        <span class="block-index">07</span>
+        <h2>Solução — serviços realizados</h2>
+      </div>
+      <table class="line-table" id="servicosTable">
+        <thead>
+          <tr>
+            <th>Serviço realizado</th>
+            <th class="num" style="width:140px;">Preço (R$)</th>
+            <th class="action"></th>
+          </tr>
+        </thead>
+        <tbody id="servicosBody"></tbody>
+      </table>
+      <button type="button" class="add-line" id="addServico">+ Adicionar serviço</button>
+      <div class="subtotal-row">
+        <span>Subtotal serviços</span>
+        <span class="value" id="subtotalServicos">R$ 0,00</span>
+      </div>
+    </section>
+
+    <!-- PEÇAS -->
+    <section class="block">
+      <div class="block-head">
+        <span class="block-index">08</span>
+        <h2>Peças trocadas ou adicionadas <span style="font-weight:400;color:var(--ink-soft);font-size:13px;">(opcional)</span></h2>
+      </div>
+      <table class="line-table" id="pecasTable">
+        <thead>
+          <tr>
+            <th>Peça</th>
+            <th class="num" style="width:140px;">Preço (R$)</th>
+            <th class="action"></th>
+          </tr>
+        </thead>
+        <tbody id="pecasBody"></tbody>
+      </table>
+      <button type="button" class="add-line" id="addPeca">+ Adicionar peça</button>
+      <div class="subtotal-row">
+        <span>Subtotal peças</span>
+        <span class="value" id="subtotalPecas">R$ 0,00</span>
+      </div>
+    </section>
+
+    <!-- FOTOS -->
+    <section class="block">
+      <div class="block-head">
+        <span class="block-index">09</span>
+        <h2>Fotos do serviço <span style="font-weight:400;color:var(--ink-soft);font-size:13px;">(opcional)</span></h2>
+      </div>
+      <label class="photo-drop" for="fotoInput">
+        <span>Clique para escolher fotos do equipamento ou do serviço realizado</span>
+        <span class="drop-sub">JPG ou PNG</span>
+        <input type="file" id="fotoInput" accept="image/*" multiple>
+      </label>
+      <div class="photo-grid" id="photoGrid"></div>
+    </section>
+
+  </form>
+
+  <!-- TOTAL -->
+  <div class="total-band">
+    <div class="breakdown">
+      <span>Serviços <b id="bdServicos">R$ 0,00</b></span>
+      <span>Peças <b id="bdPecas">R$ 0,00</b></span>
+    </div>
+    <div class="grand">
+      <label>Total geral</label>
+      <div class="value" id="totalGeral">R$ 0,00</div>
+    </div>
+  </div>
+
+  <div class="actions">
+    <button type="button" class="btn" id="btnLimpar">Limpar tudo</button>
+    <button type="button" class="btn" id="btnSalvar">Salvar O.S.</button>
+    <button type="button" class="btn primary" id="btnGerar">Gerar documento</button>
+  </div>
+
+</div>
+
+<footer class="note">Ordem de serviço gerada localmente no navegador — nenhum dado é enviado a um servidor.</footer>
+
+<!-- Modal de escolha de formato -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal-box">
+    <h3>Como deseja gerar a ordem de serviço?</h3>
+    <p>Escolha o formato de saída para os dados preenchidos.</p>
+    <div class="modal-options">
+      <button type="button" class="modal-option" id="opcaoExcel">
+        <span class="modal-option-title">Planilha Excel</span>
+        <span class="modal-option-desc">Baixa um arquivo .xlsx com todos os dados</span>
+      </button>
+      <button type="button" class="modal-option" id="opcaoPdf">
+        <span class="modal-option-title">Arquivo PDF</span>
+        <span class="modal-option-desc">Gera um PDF pronto para salvar ou enviar</span>
+      </button>
+      <button type="button" class="modal-option" id="opcaoImprimir">
+        <span class="modal-option-title">Imprimir</span>
+        <span class="modal-option-desc">Abre a caixa de impressão do navegador</span>
+      </button>
+    </div>
+    <button type="button" class="modal-cancel" id="modalCancelar">Cancelar</button>
+  </div>
+</div>
+
+<script src="db.js"></script>
+<script src="script.js"></script>
+</body>
+</html>

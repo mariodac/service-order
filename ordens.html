@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>O.S. salvas — Assistência Técnica</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<nav class="app-nav">
+  <div class="app-nav-inner">
+    <span class="app-nav-brand">Assistência Técnica</span>
+    <div class="app-nav-links">
+      <a href="index.html">Nova O.S.</a>
+      <a href="ordens.html" class="active">O.S. salvas</a>
+      <a href="relatorio.html">Relatório</a>
+    </div>
+  </div>
+</nav>
+
+<div class="sheet wide">
+
+  <div class="page-header">
+    <div>
+      <h1>Ordens de serviço salvas</h1>
+      <p>Consulte, edite ou exporte as ordens de serviço já registradas neste navegador.</p>
+    </div>
+    <div class="page-filters">
+      <input type="text" id="filtroBusca" placeholder="Buscar por cliente ou nº da O.S.">
+      <select id="filtroStatus">
+        <option value="">Todos os status</option>
+        <option value="Aberta">Aberta</option>
+        <option value="Em andamento">Em andamento</option>
+        <option value="Concluída">Concluída</option>
+      </select>
+    </div>
+  </div>
+
+  <div id="tableWrap" class="os-table-wrap">
+    <table class="os-table">
+      <thead>
+        <tr>
+          <th>Nº O.S.</th>
+          <th>Cliente</th>
+          <th>Equipamento</th>
+          <th>Status</th>
+          <th>Entrada</th>
+          <th>Previsão</th>
+          <th class="num">Total</th>
+          <th>Ações</th>
+        </tr>
+      </thead>
+      <tbody id="osTableBody"></tbody>
+    </table>
+  </div>
+
+  <div id="emptyState" class="empty-state" style="display:none;">
+    <h3>Nenhuma ordem de serviço encontrada</h3>
+    <p>As ordens de serviço salvas por aqui vão aparecer nesta lista.</p>
+    <a class="btn primary" href="index.html">Criar nova O.S.</a>
+  </div>
+
+</div>
+
+<footer class="note">Os dados ficam armazenados apenas neste navegador — nenhum dado é enviado a um servidor.</footer>
+
+<script src="db.js"></script>
+<script src="ordens.js"></script>
+</body>
+</html>
