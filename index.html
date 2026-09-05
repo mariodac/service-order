@@ -47,6 +47,8 @@
     </div>
   </div>
 
+  <div class="stub-spacer" aria-hidden="true"></div>
+
   <div class="perforation"></div>
 
   <form id="osForm">
@@ -240,21 +242,23 @@
   </form>
 
   <!-- TOTAL -->
-  <div class="total-band">
-    <div class="breakdown">
-      <span>Serviços <b id="bdServicos">R$ 0,00</b></span>
-      <span>Peças <b id="bdPecas">R$ 0,00</b></span>
+  <div class="order-toolbar">
+    <div class="total-band">
+      <div class="breakdown">
+        <span>Serviços <b id="bdServicos">R$ 0,00</b></span>
+        <span>Peças <b id="bdPecas">R$ 0,00</b></span>
+      </div>
+      <div class="grand">
+        <label>Total geral</label>
+        <div class="value" id="totalGeral">R$ 0,00</div>
+      </div>
     </div>
-    <div class="grand">
-      <label>Total geral</label>
-      <div class="value" id="totalGeral">R$ 0,00</div>
+    
+    <div class="actions">
+      <button type="button" class="btn" id="btnLimpar">Limpar tudo</button>
+      <button type="button" class="btn" id="btnSalvar">Salvar O.S.</button>
+      <button type="button" class="btn primary" id="btnGerar">Gerar documento</button>
     </div>
-  </div>
-
-  <div class="actions">
-    <button type="button" class="btn" id="btnLimpar">Limpar tudo</button>
-    <button type="button" class="btn" id="btnSalvar">Salvar O.S.</button>
-    <button type="button" class="btn primary" id="btnGerar">Gerar documento</button>
   </div>
 
 </div>
