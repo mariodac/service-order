@@ -34,6 +34,12 @@
     Chart.defaults.color = "#4c5750";
   }
 
+  if (typeof window.Chart === "undefined") {
+    document.querySelector(".chart-grid").innerHTML =
+      "<p>Não foi possível carregar a biblioteca de gráficos.</p>";
+    return;
+  }
+
   // ---------- O.S. por status ----------
   new Chart(document.getElementById("chartStatus"), {
     type: "doughnut",
