@@ -1,4 +1,4 @@
-(function(){
+(async function(){
   "use strict";
 
   const tbody = document.getElementById("osTableBody");
@@ -20,13 +20,22 @@
     return partes[2] + "/" + partes[1] + "/" + partes[0];
   }
 
-  function render(){
+  async function render(){
     const busca = filtroBusca.value.trim().toLowerCase();
     const status = filtroStatus.value;
 
-    let lista = OSDatabase.getAll().slice().sort((a, b) => {
+    let lista;
+    try {
+      lista = (await OSDatabase.getAll()).slice().sort((a, b) => {
       return (b.atualizadoEm || "").localeCompare(a.atualizadoEm || "");
-    });
+      });
+    } catch (error) {
+      console.error(error);
+      tableWrap.style.display = "none";
+      emptyState.style.display = "block";
+      emptyState.querySelector("p").textContent = error.message || "Não foi possível carregar as ordens.";
+      return;
+    }
 
     if(status) lista = lista.filter(o => o.status === status);
     if(busca){
@@ -68,7 +77,7 @@
       actionsTd.className = "row-actions";
 
       const abrirLink = document.createElement("a");
-      abrirLink.href = "index.html?id=" + encodeURIComponent(o.id);
+      abrirLink.href = "../index.html?id=" + encodeURIComponent(o.id);
       abrirLink.textContent = "Abrir";
       actionsTd.appendChild(abrirLink);
 
@@ -88,11 +97,15 @@
       delBtn.type = "button";
       delBtn.className = "danger";
       delBtn.textContent = "Excluir";
-      delBtn.addEventListener("click", function(){
+      delBtn.addEventListener("click", async function(){
         if(confirm("Excluir a O.S. nº " + (o.osNumero || "sem número") + "? Essa ação não pode ser desfeita.")){
-          OSDatabase.remove(o.id);
-          showToast("Ordem de serviço excluída.");
-          render();
+          try {
+            await OSDatabase.remove(o.id);
+            showToast("Ordem de serviço excluída.");
+            await render();
+          } catch (error) {
+            showToast(error.message || "Não foi possível excluir a ordem.", "error");
+          }
         }
       });
       actionsTd.appendChild(delBtn);
@@ -101,8 +114,8 @@
     });
   }
 
-  filtroBusca.addEventListener("input", render);
-  filtroStatus.addEventListener("change", render);
+  filtroBusca.addEventListener("input", () => { render(); });
+  filtroStatus.addEventListener("change", () => { render(); });
 
-  render();
+  await render();
 })();

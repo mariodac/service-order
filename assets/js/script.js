@@ -1,4 +1,4 @@
-(function () {
+(async function () {
   "use strict";
 
   const params = new URLSearchParams(window.location.search);
@@ -121,7 +121,7 @@
     let htmlContent = "";
 
     data.forEach((os) => {
-      // Aplica a função escapeHtml em TODOS os campos que vêm de input ou localStorage
+      // Aplica a função escapeHtml em todos os campos que vêm do formulário ou do Supabase.
       const clienteEscaped = escapeHtml(os.cliente || "");
       const equipamentoEscaped = escapeHtml(os.equipamento || "");
 
@@ -439,8 +439,9 @@
   // ---------- Fotos com preview ----------
   const fotoInput = document.getElementById("fotoInput");
   const photoGrid = document.getElementById("photoGrid");
+  const pendingPhotoFiles = new Map();
 
-  function addPhotoThumb(dataUrl) {
+  function addPhotoThumb(dataUrl, file) {
     const thumb = document.createElement("div");
     thumb.className = "photo-thumb";
     thumb.innerHTML =
@@ -449,28 +450,53 @@
       '" alt="Foto do serviço">' +
       '<button type="button" title="Remover">×</button>';
     thumb.dataset.src = dataUrl;
+    if (file) {
+      thumb.dataset.pending = "true";
+      pendingPhotoFiles.set(thumb, file);
+    }
     thumb
       .querySelector("button")
-      .addEventListener("click", () => thumb.remove());
+      .addEventListener("click", () => {
+        if (thumb.dataset.pending === "true") URL.revokeObjectURL(thumb.dataset.src);
+        pendingPhotoFiles.delete(thumb);
+        thumb.remove();
+      });
     photoGrid.appendChild(thumb);
   }
 
   fotoInput.addEventListener("change", function () {
-    Array.from(fotoInput.files).forEach((file) => {
-      if (!file.type.startsWith("image/")) return;
-      const reader = new FileReader();
-      reader.onload = function (e) {
-        addPhotoThumb(e.target.result);
-      };
-      reader.readAsDataURL(file);
-    });
+    const files = Array.from(fotoInput.files).filter((file) => file.type.startsWith("image/"));
     fotoInput.value = "";
+    if (!files.length) return;
+    files.forEach((file) => addPhotoThumb(URL.createObjectURL(file), file));
+    showToast(files.length + " imagem(ns) pronta(s) para enviar ao salvar a O.S.", "info");
   });
 
   function getPhotos() {
-    return Array.from(photoGrid.querySelectorAll(".photo-thumb")).map(
-      (t) => t.dataset.src,
-    );
+    return Array.from(photoGrid.querySelectorAll(".photo-thumb"))
+      .filter((thumb) => thumb.dataset.pending !== "true")
+      .map((thumb) => thumb.dataset.src);
+  }
+
+  async function uploadPendingPhotos() {
+    const pendingThumbs = Array.from(photoGrid.querySelectorAll('.photo-thumb[data-pending="true"]'));
+    if (!pendingThumbs.length) return;
+
+    showToast("Enviando " + pendingThumbs.length + " imagem(ns) ao ImgBB...", "info");
+    const urls = await Promise.all(pendingThumbs.map((thumb) => {
+      const file = pendingPhotoFiles.get(thumb);
+      if (!file) throw new Error("Não foi possível localizar uma imagem pendente.");
+      return OSDatabase.uploadImage(file);
+    }));
+
+    pendingThumbs.forEach((thumb, index) => {
+      URL.revokeObjectURL(thumb.dataset.src);
+      thumb.dataset.src = urls[index];
+      thumb.dataset.pending = "false";
+      thumb.querySelector("img").src = urls[index];
+      pendingPhotoFiles.delete(thumb);
+    });
+    showToast("Imagem(ns) enviada(s) com sucesso.", "success");
   }
 
   // ---------- Coleta de dados do formulário ----------
@@ -534,8 +560,10 @@
       orcamento: val("orcamentoDescricao"),
       totalGeral: totalServicos + totalPecas,
       fotos: getPhotos(),
-      servicos: sanitizeText(JSON.stringify(servicos)),
-      pecas: sanitizeText(JSON.stringify(pecas)),
+      servicos,
+      pecas,
+      totalServicos,
+      totalPecas,
     };
 
     /* return {
@@ -605,6 +633,10 @@
       : [{}]
     ).forEach((r) => pecasTable.addRow(false, r));
 
+    Array.from(photoGrid.querySelectorAll('.photo-thumb[data-pending="true"]')).forEach((thumb) => {
+      URL.revokeObjectURL(thumb.dataset.src);
+      pendingPhotoFiles.delete(thumb);
+    });
     photoGrid.innerHTML = "";
     (registro.fotos || []).forEach(addPhotoThumb);
 
@@ -620,7 +652,13 @@
   }
 
   if (editId && window.OSDatabase) {
-    const registro = OSDatabase.getById(editId);
+    let registro = null;
+    try {
+      registro = await OSDatabase.getById(editId);
+    } catch (error) {
+      console.error(error);
+      showToast(error.message || "Não foi possível carregar a ordem de serviço.", "error");
+    }
     if (registro) {
       preencherFormulario(registro);
     } else {
@@ -640,24 +678,11 @@
 
   updateTotals();
 
-  // ---------- Salvar no "banco de dados" local ----------
-  function salvarOS(mostrarToast) {
+  // ---------- Salvar no Supabase ----------
+  async function salvarOS(mostrarToast) {
     if (!window.OSDatabase) {
       alert(
-        "Não foi possível acessar o banco de dados local (db.js). Verifique se o arquivo db.js está na mesma pasta do index.html.",
-      );
-      return null;
-    }
-    if (
-      window.OSDatabase.storageDisponivel &&
-      !window.OSDatabase.storageDisponivel()
-    ) {
-      alert(
-        "Seu navegador está bloqueando o armazenamento local (localStorage) para esta página.\n\n" +
-        "Isso costuma acontecer quando o arquivo é aberto direto por duplo clique (endereço começando com file://) " +
-        "ou em modo de navegação anônima/privada com bloqueio de dados de site.\n\n" +
-        "Tente abrir pelo endereço publicado no GitHub Pages, ou por um servidor local, e verifique se o navegador não está " +
-        "com 'bloquear cookies e dados de site' ativado para este endereço.",
+        "Não foi possível acessar a configuração do Supabase. Verifique config.js e db.js.",
       );
       return null;
     }
@@ -670,11 +695,23 @@
       osPrevisaoInput.focus();
       return null;
     }
+    try {
+      await uploadPendingPhotos();
+    } catch (error) {
+      console.error(error);
+      showToast(error.message || "Não foi possível enviar as imagens. A O.S. não foi salva.", "error");
+      return null;
+    }
     const dados = collectData();
     const agora = new Date().toISOString();
-    const registroExistente = registroAtualId
-      ? OSDatabase.getById(registroAtualId)
-      : null;
+    let registroExistente = null;
+    try {
+      registroExistente = registroAtualId ? await OSDatabase.getById(registroAtualId) : null;
+    } catch (error) {
+      console.error(error);
+      showToast(error.message || "Não foi possível consultar a ordem de serviço.", "error");
+      return null;
+    }
     const registro = Object.assign({}, dados, {
       id: registroAtualId || OSDatabase.generateId(),
       criadoEm: registroExistente
@@ -683,10 +720,17 @@
       atualizadoEm: agora,
     });
 
-    const salvo = OSDatabase.upsert(registro);
+    let salvo = null;
+    try {
+      salvo = await OSDatabase.upsert(registro);
+    } catch (error) {
+      console.error(error);
+      showToast(error.message || "Não foi possível salvar a ordem de serviço.", "error");
+      return null;
+    }
     if (!salvo) {
       alert(
-        "Não foi possível salvar a ordem de serviço. O armazenamento local do navegador pode estar cheio ou bloqueado.",
+        "Não foi possível salvar a ordem de serviço no Supabase.",
       );
       return null;
     }
@@ -705,8 +749,8 @@
     return salvo;
   }
 
-  document.getElementById("btnSalvar").addEventListener("click", function () {
-    salvarOS(true);
+  document.getElementById("btnSalvar").addEventListener("click", async function () {
+    await salvarOS(true);
   });
 
   // ---------- Modal de escolha (gerar documento) ----------
@@ -770,6 +814,10 @@
     document.getElementById("pecasBody").innerHTML = "";
     servicosTable.addRow(false);
     pecasTable.addRow(false);
+    Array.from(photoGrid.querySelectorAll('.photo-thumb[data-pending="true"]')).forEach((thumb) => {
+      URL.revokeObjectURL(thumb.dataset.src);
+      pendingPhotoFiles.delete(thumb);
+    });
     photoGrid.innerHTML = "";
     osDataInput.value = hoje;
     setStatus("Aberta");

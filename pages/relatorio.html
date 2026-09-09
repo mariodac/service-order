@@ -4,11 +4,13 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Relatório — Assistência Técnica</title>
+<link rel="icon" href="../assets/images/favicon.ico" sizes="any">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<link rel="stylesheet" href="style.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<link rel="stylesheet" href="../assets/css/style.css">
 </head>
 <body>
 
@@ -16,7 +18,7 @@
   <div class="app-nav-inner">
     <span class="app-nav-brand">Assistência Técnica</span>
     <div class="app-nav-links">
-      <a href="index.html">Nova O.S.</a>
+      <a href="../index.html">Nova O.S.</a>
       <a href="ordens.html">O.S. salvas</a>
       <a href="relatorio.html" class="active">Relatório</a>
     </div>
@@ -74,14 +76,15 @@
   <div id="relatorioEmpty" class="empty-state" style="display:none;">
     <h3>Ainda não há dados suficientes</h3>
     <p>Salve algumas ordens de serviço para ver os indicadores e gráficos aqui.</p>
-    <a class="btn primary" href="index.html">Criar nova O.S.</a>
+    <a class="btn primary" href="../index.html">Criar nova O.S.</a>
   </div>
 
 </div>
 
-<footer class="note">Os dados ficam armazenados apenas neste navegador — nenhum dado é enviado a um servidor.</footer>
+<footer class="note">Dados salvos no Supabase. Imagens são hospedadas no ImgBB.</footer>
 
-<script src="db.js"></script>
-<script src="relatorio.js"></script>
+<script src="../assets/js/config.js"></script>
+<script src="../assets/js/db.js"></script>
+<script src="../assets/js/relatorio.js"></script>
 </body>
 </html>

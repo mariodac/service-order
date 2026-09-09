@@ -1,70 +1,72 @@
 /*
- * db.js — "banco de dados" local das ordens de serviço.
- * Usa localStorage do navegador (não envia nada para nenhum servidor).
+ * db.js — camada remota das ordens de serviço.
+ * Usa Supabase para dados e ImgBB para imagens.
  * Compartilhado entre index.html, ordens.html e relatorio.html.
  */
 (function(window){
   "use strict";
 
-  const DB_KEY = "os_database_v1";
+  const TABLE = "ordens_servico";
+  const config = window.APP_CONFIG || {};
+  let supabaseClient;
 
-  function getAll(){
-    try{
-      const raw = localStorage.getItem(DB_KEY);
-      const list = raw ? JSON.parse(raw) : [];
-      return Array.isArray(list) ? list : [];
-    }catch(e){
-      console.error("Não foi possível ler o banco de dados local:", e);
-      return [];
+  function getClient(){
+    if(supabaseClient) return supabaseClient;
+    if(!window.supabase || !config.supabaseUrl || !config.supabaseAnonKey){
+      throw new Error("Supabase não configurado. Preencha o arquivo config.js.");
     }
+    supabaseClient = window.supabase.createClient(config.supabaseUrl, config.supabaseAnonKey);
+    return supabaseClient;
   }
 
-  function saveAll(list){
-    try{
-      localStorage.setItem(DB_KEY, JSON.stringify(list));
-      return true;
-    }catch(e){
-      console.error("Não foi possível salvar no banco de dados local:", e);
-      return false;
+  function unwrap(result, fallback){
+    if(result.error){
+      console.error("Erro ao comunicar com o Supabase:", result.error);
+      throw new Error(result.error.message || "Não foi possível comunicar com o Supabase.");
     }
+    return result.data || fallback;
   }
 
-  function getById(id){
-    return getAll().find(o => o.id === id) || null;
+  async function getAll(){
+    const rows = unwrap(await getClient().from(TABLE).select("dados").order("atualizado_em", { ascending: false }), []);
+    return rows.map(row => row.dados).filter(Boolean);
   }
 
-  function upsert(record){
-    const list = getAll();
-    const idx = list.findIndex(o => o.id === record.id);
-    if(idx >= 0){ list[idx] = record; } else { list.push(record); }
-    const ok = saveAll(list);
-    return ok ? record : null;
+  async function getById(id){
+    const row = unwrap(await getClient().from(TABLE).select("dados").eq("id", id).maybeSingle(), null);
+    return row ? row.dados : null;
   }
 
-  function storageDisponivel(){
-    try{
-      const testKey = "__os_storage_test__";
-      localStorage.setItem(testKey, "1");
-      localStorage.removeItem(testKey);
-      return true;
-    }catch(e){
-      return false;
-    }
+  async function upsert(record){
+    const row = unwrap(await getClient().from(TABLE)
+      .upsert({ id: record.id, dados: record, atualizado_em: new Date().toISOString() }, { onConflict: "id" })
+      .select("dados").single(), null);
+    return row ? row.dados : null;
   }
 
-  function remove(id){
-    saveAll(getAll().filter(o => o.id !== id));
-  }
-
-  function clearAll(){
-    localStorage.removeItem(DB_KEY);
+  async function remove(id){
+    unwrap(await getClient().from(TABLE).delete().eq("id", id), null);
   }
 
   function generateId(){
-    return "os_" + Date.now().toString(36) + "_" + Math.random().toString(36).slice(2, 8);
+    return "os_" + Date.now().toString(36) + "_" + crypto.getRandomValues(new Uint32Array(1))[0].toString(36);
   }
 
-  window.OSDatabase = { getAll, saveAll, getById, upsert, remove, clearAll, generateId, storageDisponivel };
+  async function uploadImage(file){
+    if(!config.imgbbApiKey) throw new Error("ImgBB não configurado. Preencha o arquivo config.js.");
+    if(!file || !file.type || !file.type.startsWith("image/")) throw new Error("Selecione uma imagem válida.");
+    const formData = new FormData();
+    formData.append("image", file);
+    formData.append("name", "os_" + Date.now());
+    const response = await fetch("https://api.imgbb.com/1/upload?key=" + encodeURIComponent(config.imgbbApiKey), { method: "POST", body: formData });
+    const result = await response.json().catch(() => null);
+    if(!response.ok || !result || !result.success || !result.data || !result.data.url){
+      throw new Error((result && result.error && result.error.message) || "Não foi possível enviar a imagem ao ImgBB.");
+    }
+    return result.data.url;
+  }
+
+  window.OSDatabase = { getAll, getById, upsert, remove, generateId, uploadImage };
 
   // ---------- Formatação ----------
   function formatBRL(value){

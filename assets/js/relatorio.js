@@ -1,7 +1,17 @@
-(function(){
+(async function(){
   "use strict";
 
-  const lista = OSDatabase.getAll();
+  let lista;
+  try {
+    lista = await OSDatabase.getAll();
+  } catch (error) {
+    console.error(error);
+    document.getElementById("relatorioEmpty").style.display = "block";
+    document.getElementById("relatorioEmpty").querySelector("p").textContent = error.message || "Não foi possível carregar os dados.";
+    document.getElementById("kpiGrid").style.display = "none";
+    document.querySelector(".chart-grid").style.display = "none";
+    return;
+  }
 
   const totalOs = lista.length;
   const faturamentoTotal = lista.reduce((s, o) => s + (o.totalGeral || 0), 0);

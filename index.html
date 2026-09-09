@@ -4,12 +4,14 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Ordem de Serviço — Assistência Técnica</title>
+<link rel="icon" href="assets/images/favicon.ico" sizes="any">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<link rel="stylesheet" href="style.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body>
 
@@ -18,8 +20,8 @@
     <span class="app-nav-brand">Assistência Técnica</span>
     <div class="app-nav-links">
       <a href="index.html" class="active">Nova O.S.</a>
-      <a href="ordens.html">O.S. salvas</a>
-      <a href="relatorio.html">Relatório</a>
+      <a href="pages/ordens.html">O.S. salvas</a>
+      <a href="pages/relatorio.html">Relatório</a>
     </div>
   </div>
 </nav>
@@ -265,7 +267,7 @@
 
 </div>
 
-<footer class="note">Ordem de serviço gerada localmente no navegador — nenhum dado é enviado a um servidor.</footer>
+<footer class="note">Dados salvos com segurança no Supabase. Imagens são hospedadas no ImgBB.</footer>
 
 <!-- Modal de escolha de formato -->
 <div class="modal-overlay" id="modalOverlay">
@@ -290,7 +292,8 @@
   </div>
 </div>
 
-<script src="db.js"></script>
-<script src="script.js"></script>
+<script src="assets/js/config.js"></script>
+<script src="assets/js/db.js"></script>
+<script src="assets/js/script.js"></script>
 </body>
 </html>
