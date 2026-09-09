@@ -43,12 +43,12 @@ body {
 /* ---------- Cabeçalho estilo talão ---------- */
 
 .stub-spacer {
-  height: 178px; /* reserva o espaço ocupado pela faixa verde */
+    height: 178px; /* reserva o espaço ocupado pela faixa verde */
 }
 
 .stub {
     position: fixed;
-    top: 61px; 
+    top: 61px;
     left: 50%;
     z-index: 45;
     width: min(880px, calc(100% - 32px));
@@ -999,38 +999,38 @@ table.os-table tr:last-child td {
 }
 
 .order-toolbar {
-  position: fixed;
-  bottom: 0;
-  left: 50%;
-  z-index: 60;
-  width: min(880px, calc(100% - 32px));
-  transform: translateX(-50%);
-  background: var(--card);
-  border: 1px solid var(--line);
-  border-bottom: 0;
-  border-radius: var(--radius) var(--radius) 0 0;
-  box-shadow: 0 -5px 16px rgba(0, 0, 0, 0.14);
+    position: fixed;
+    bottom: 0;
+    left: 50%;
+    z-index: 60;
+    width: min(880px, calc(100% - 32px));
+    transform: translateX(-50%);
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-bottom: 0;
+    border-radius: var(--radius) var(--radius) 0 0;
+    box-shadow: 0 -5px 16px rgba(0, 0, 0, 0.14);
 }
 
 .order-toolbar .actions {
-  padding: 12px 32px;
+    padding: 12px 32px;
 }
 
 body {
-  padding-bottom: 180px;
+    padding-bottom: 180px;
 }
 
 @media (max-width: 640px) {
-  body {
-    padding-bottom: 260px;
-  }
+    body {
+        padding-bottom: 260px;
+    }
 
-  .order-toolbar {
-    width: 100%;
-  }
+    .order-toolbar {
+        width: 100%;
+    }
 
-  .order-toolbar .actions {
-    flex-wrap: wrap;
-    padding: 12px 16px;
-  }
+    .order-toolbar .actions {
+        flex-wrap: wrap;
+        padding: 12px 16px;
+    }
 }
