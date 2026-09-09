@@ -68,7 +68,7 @@
       actionsTd.className = "row-actions";
 
       const abrirLink = document.createElement("a");
-      abrirLink.href = "index.html?id=" + encodeURIComponent(o.id);
+      abrirLink.href = "../index.html?id=" + encodeURIComponent(o.id);
       abrirLink.textContent = "Abrir";
       actionsTd.appendChild(abrirLink);
 
