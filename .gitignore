@@ -1,0 +1,10 @@
+# Configuração local com chaves de acesso
+config.js
+
+*.sql
+
+# Arquivos locais do editor e sistema operacional
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
