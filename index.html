@@ -39,7 +39,7 @@
     </div>
     <div class="meta">
       <label for="osNumero">Nº da O.S.</label>
-      <input class="os-number" id="osNumero" type="text" placeholder="0001">
+      <input class="os-number" id="osNumero" type="text" placeholder="0001" maxlength="30">
       <div class="date-field">
         <label for="osData">Data de entrada</label>
         <input id="osData" type="date">
@@ -62,7 +62,7 @@
       <div class="grid">
         <div class="field span-2">
           <label for="clienteNome">Nome completo</label>
-          <input id="clienteNome" type="text" placeholder="Nome do cliente">
+          <input id="clienteNome" type="text" placeholder="Nome do cliente" maxlength="254">
         </div>
         <div class="field">
           <label for="clienteTelefone">Telefone / WhatsApp</label>
@@ -71,12 +71,12 @@
         </div>
         <div class="field">
           <label for="clienteEmail">E-mail</label>
-          <input id="clienteEmail" type="email" placeholder="cliente@email.com">
+          <input id="clienteEmail" type="email" placeholder="cliente@email.com" maxlength="254">
           <span class="field-error" id="erroEmail">E-mail inválido.</span>
         </div>
         <div class="field span-2">
           <label for="clienteEndereco">Endereço</label>
-          <input id="clienteEndereco" type="text" placeholder="Rua, número, bairro, cidade">
+          <input id="clienteEndereco" type="text" placeholder="Rua, número, bairro, cidade" maxlength="254">
         </div>
         <div class="field">
           <label for="clienteDocumento">CPF / CNPJ</label>
@@ -95,11 +95,11 @@
       <div class="grid cols-3">
         <div class="field">
           <label for="tecnicoNome">Nome do técnico</label>
-          <input id="tecnicoNome" type="text" placeholder="Responsável pelo atendimento">
+          <input id="tecnicoNome" type="text" placeholder="Responsável pelo atendimento" maxlength="254">
         </div>
         <div class="field">
           <label for="tecnicoContato">Contato</label>
-          <input id="tecnicoContato" type="text" placeholder="Telefone ou ramal">
+          <input id="tecnicoContato" type="text" placeholder="Telefone ou ramal" maxlength="20">
         </div>
         <div class="field">
           <label for="osPrevisao">Previsão de entrega</label>
@@ -118,27 +118,27 @@
       <div class="grid cols-3">
         <div class="field">
           <label for="equipTipo">Tipo de equipamento</label>
-          <input id="equipTipo" type="text" placeholder="Notebook, PC, impressora...">
+          <input id="equipTipo" type="text" placeholder="Notebook, PC, impressora..." maxlength="254">
         </div>
         <div class="field">
           <label for="equipMarca">Marca</label>
-          <input id="equipMarca" type="text" placeholder="Marca">
+          <input id="equipMarca" type="text" placeholder="Marca" maxlength="254">
         </div>
         <div class="field">
           <label for="equipModelo">Modelo</label>
-          <input id="equipModelo" type="text" placeholder="Modelo">
+          <input id="equipModelo" type="text" placeholder="Modelo" maxlength="254">
         </div>
         <div class="field">
           <label for="equipSerie">Número de série</label>
-          <input id="equipSerie" type="text" placeholder="Opcional">
+          <input id="equipSerie" type="text" placeholder="Opcional" maxlength="254">
         </div>
         <div class="field">
           <label for="equipSenha">Senha de acesso</label>
-          <input id="equipSenha" type="text" placeholder="Opcional">
+          <input id="equipSenha" type="text" placeholder="Opcional" maxlength="254">
         </div>
         <div class="field">
           <label for="equipAcessorios">Acessórios entregues</label>
-          <input id="equipAcessorios" type="text" placeholder="Carregador, mouse, cabo...">
+          <input id="equipAcessorios" type="text" placeholder="Carregador, mouse, cabo..." maxlength="254">
         </div>
       </div>
     </section>
