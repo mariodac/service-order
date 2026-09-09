@@ -40,6 +40,34 @@ body {
     overflow: visible;
 }
 
+/* ---------- corte tracejado antes do rodapé ---------- */
+
+.footer-perforation {
+    position: relative;
+    height: 34px;
+    margin: 0 32px;
+    border-top: 2px dashed var(--line);
+}
+
+.footer-perforation::before,
+.footer-perforation::after {
+    content: "";
+    position: absolute;
+    top: -8px;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--paper);
+}
+
+.footer-perforation::before {
+    left: -40px;
+}
+
+.footer-perforation::after {
+    right: -40px;
+}
+
 /* ---------- Cabeçalho estilo talão ---------- */
 
 .stub-spacer {
